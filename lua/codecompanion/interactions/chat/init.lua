@@ -1083,18 +1083,28 @@ end
 ---Find tool calls in messages that are missing matching results
 ---@return table<string, table> Map of call_id to the call object
 function Chat:_orphaned_tool_calls()
-  local pending = {}
+  local pending, aliases = {}, {}
 
   for _, msg in ipairs(self.messages) do
     if msg.tools and msg.tools.calls then
       for _, call in ipairs(msg.tools.calls) do
+        local key = call.call_id or call.id
+        if call.call_id then
+          aliases[call.call_id] = key
+        end
         if call.id then
-          pending[call.id] = call
+          aliases[call.id] = key
+        end
+        if key then
+          pending[key] = call
         end
       end
     end
     if msg.tools and msg.tools.call_id then
-      pending[msg.tools.call_id] = nil
+      local key = aliases[msg.tools.call_id]
+      if key then
+        pending[key] = nil
+      end
     end
   end
 
@@ -1513,7 +1523,7 @@ function Chat:done(output, reasoning, tools, meta, opts)
 
   self:_clear_status()
 
-  if opts.status == "stopped" then
+  if self.status == CONSTANTS.STATUS_ERROR or opts.status == "stopped" then
     self:_complete_orphaned_tool_calls()
   end
 
