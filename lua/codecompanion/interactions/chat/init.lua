@@ -2060,9 +2060,11 @@ end
 function Chat:update_metadata()
   local model
   local config_options
+  local usage
 
   if self.adapter.type == "http" then
     model = adapter_utils.model(self.adapter)
+    usage = vim.deepcopy(self.adapter.usage)
   elseif self.adapter.type == "acp" and self.acp_connection then
     local acp_models = self.acp_connection:get_models()
     model = acp_models and acp_models.currentModelId or "default"
@@ -2097,6 +2099,7 @@ function Chat:update_metadata()
     cycles = self.cycle,
     id = self.id,
     tokens = self.tokens or 0,
+    usage = usage,
     tools = vim.tbl_count(self.tool_registry.in_use) or 0,
   }
 
