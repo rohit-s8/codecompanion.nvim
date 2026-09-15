@@ -136,6 +136,7 @@ end
 ---@field opts? table Additional options for the adapter
 ---@field schema table Set of parameters for the generative AI service that the user can customise in the chat buffer
 ---@field temp? table A table to store temporary values which are not passed to the request
+---@field usage { input: integer, output: integer, cache_read: integer, cache_write: integer } A table to store the lifetime token usage for the adapter
 
 ---@class CodeCompanion.HTTPAdapter.Safe
 ---@field name string The name of the adapter

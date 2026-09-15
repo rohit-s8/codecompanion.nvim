@@ -47,6 +47,12 @@ return {
     tools = true,
     vision = true,
   },
+  usage = {
+    input = 0,
+    output = 0,
+    cache_read = 0,
+    cache_write = 0
+  },
   features = {
     text = true,
     tokens = true,
@@ -239,6 +245,11 @@ return {
 
         if ok then
           if json.usage then
+            local prompt_token_details = json.usage.prompt_token_details or {}
+            self.usage.input = self.usage.input + (json.usage.prompt_tokens or 0)
+            self.usage.output = self.usage.output + (json.usage.completion_tokens or 0)
+            self.usage.cache_read = self.usage.cache_read + (prompt_token_details.cached_tokens or 0)
+
             local tokens = json.usage.total_tokens
             log:trace("Tokens: %s", tokens)
             return tokens

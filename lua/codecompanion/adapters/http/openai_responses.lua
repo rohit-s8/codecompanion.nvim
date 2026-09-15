@@ -28,6 +28,12 @@ return {
     tools = true,
     vision = true,
   },
+  usage = {
+    input = 0,
+    output = 0,
+    cache_read = 0,
+    cache_write = 0
+  },
   url = "https://api.openai.com/v1/responses",
   env = {
     api_key = "OPENAI_API_KEY",
@@ -602,6 +608,13 @@ return {
 
           if ok then
             if json.type == "response.completed" and json.response.usage then
+              self.usage.input = self.usage.input + (json.usage.input_tokens or 0)
+              self.usage.output = self.usage.output + (json.usage.output_tokens or 0)
+
+              local input_tokens_details = json.usage.input_tokens_details or {}
+              self.usage.cache_read = self.usage.cache_read + (input_tokens_details.cached_tokens or 0)
+              self.usage.cache_write = self.usage.cache_write + (input_tokens_details.cache_write_tokens or 0)
+
               return json.response.usage.total_tokens
             end
           end

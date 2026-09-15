@@ -47,6 +47,13 @@ return {
   temp = {
     input_tokens = 0,
     output_tokens = 0,
+    usage = {}
+  },
+  usage = {
+    input = 0,
+    output = 0,
+    cache_read = 0,
+    cache_write = 0
   },
   available_tools = {
     ["code_execution"] = {
@@ -500,20 +507,29 @@ return {
         else
           data = data.body
         end
-        local ok, json = pcall(vim.json.decode, data)
+        local ok, json = pcall(vim.json.decode, data, { luanil = { object = true } })
 
         if ok then
           if json.type == "message_start" then
-            self.temp.input_tokens = (json.message.usage.input_tokens or 0)
-              + (json.message.usage.cache_creation_input_tokens or 0)
-              + (json.message.usage.cache_read_input_tokens or 0)
-
-            self.temp.output_tokens = json.message.usage.output_tokens or 0
+            self.temp.usage = json.message.usage or {}
+            return
           elseif json.type == "message_delta" then
-            return (self.temp.input_tokens + self.temp.output_tokens + json.usage.output_tokens)
+            self.temp.usage = vim.tbl_deep_extend("force", self.temp.usage, json.usage)
           elseif json.type == "message" then
-            return (json.usage.input_tokens + json.usage.output_tokens)
+            self.temp.usage = json.usage
           end
+
+          local input_tokens = self.temp.usage.input_tokens or 0
+          local output_tokens = self.temp.usage.output_tokens or 0
+          local cache_read_tokens = self.temp.usage.cache_read_input_tokens or 0
+          local cache_write_tokens = self.temp.usage.cache_creation_input_tokens or 0
+
+          self.usage.input = self.usage.input + input_tokens
+          self.usage.output = self.usage.output + output_tokens
+          self.usage.cache_read = self.usage.cache_read + cache_read_tokens
+          self.usage.cache_write = self.usage.cache_write + cache_write_tokens
+
+          return input_tokens + output_tokens + cache_read_tokens + cache_write_tokens
         end
       end
     end,
