@@ -167,6 +167,7 @@ return {
         else
           params.thinking = {
             type = "adaptive",
+            display = "summarized"
           }
         end
         -- Thinking isn't compatible with top_k
