@@ -519,17 +519,19 @@ return {
             self.temp.usage = json.usage
           end
 
-          local input_tokens = self.temp.usage.input_tokens or 0
-          local output_tokens = self.temp.usage.output_tokens or 0
-          local cache_read_tokens = self.temp.usage.cache_read_input_tokens or 0
-          local cache_write_tokens = self.temp.usage.cache_creation_input_tokens or 0
+          if json.type == "message_delta" or json.type == "message" then
+            local input_tokens = self.temp.usage.input_tokens or 0
+            local output_tokens = self.temp.usage.output_tokens or 0
+            local cache_read_tokens = self.temp.usage.cache_read_input_tokens or 0
+            local cache_write_tokens = self.temp.usage.cache_creation_input_tokens or 0
 
-          self.usage.input = self.usage.input + input_tokens
-          self.usage.output = self.usage.output + output_tokens
-          self.usage.cache_read = self.usage.cache_read + cache_read_tokens
-          self.usage.cache_write = self.usage.cache_write + cache_write_tokens
+            self.usage.input = self.usage.input + input_tokens
+            self.usage.output = self.usage.output + output_tokens
+            self.usage.cache_read = self.usage.cache_read + cache_read_tokens
+            self.usage.cache_write = self.usage.cache_write + cache_write_tokens
 
-          return input_tokens + output_tokens + cache_read_tokens + cache_write_tokens
+            return input_tokens + output_tokens + cache_read_tokens + cache_write_tokens
+          end
         end
       end
     end,
