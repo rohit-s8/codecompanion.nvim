@@ -525,7 +525,7 @@ return {
             local cache_read_tokens = self.temp.usage.cache_read_input_tokens or 0
             local cache_write_tokens = self.temp.usage.cache_creation_input_tokens or 0
 
-            self.usage.input = self.usage.input + input_tokens
+            self.usage.input = self.usage.input + (input_tokens + cache_read_tokens + cache_write_tokens)
             self.usage.output = self.usage.output + output_tokens
             self.usage.cache_read = self.usage.cache_read + cache_read_tokens
             self.usage.cache_write = self.usage.cache_write + cache_write_tokens
