@@ -32,12 +32,14 @@ local defaults = {
       duckduckgo = "duckduckgo",
       jina = "jina",
       markitdown = "markitdown",
+      serply = "serply",
       tavily = "tavily",
       -------------------------------------------------------------------------
       extend = nil, -- Per-adapter overrides keyed by config key e.g. { openai = { env = { api_key = "ABC-123" } } }
       opts = {
         allow_insecure = false, -- Allow insecure connections?
         cache_models_for = 1800, -- Cache adapter models for this long (seconds)
+        hidden = { duckduckgo = true, jina = true, markitdown = true, tavily = true },
         proxy = nil, -- [protocol://]host[:port] e.g. socks5://127.0.0.1:9999
         show_presets = true, -- Show preset adapters
         show_model_choices = true, -- Show model choices when changing adapter
@@ -313,7 +315,7 @@ The user is working on a %s machine. Please respond with system specific command
           path = "interactions.chat.tools.builtin.web_search",
           description = "Search the web for information",
           opts = {
-            adapter = "tavily", -- tavily, duckduckgo, jina
+            adapter = "tavily", -- tavily, duckduckgo, jina, serply
             opts = {
               -- Tavily options
               search_depth = "advanced",
@@ -474,6 +476,7 @@ If you are providing code changes, use the insert_edit_into_file tool (if availa
           description = "Insert a file",
           opts = {
             contains_code = true,
+            dirs = {}, -- Directories to search in, alongside the current working directory
             interactions = { "chat", "cli" },
             max_lines = 1000,
             provider = providers.pickers, -- telescope|fzf_lua|mini_pick|snacks|default
@@ -511,6 +514,13 @@ If you are providing code changes, use the insert_edit_into_file tool (if availa
           opts = {
             contains_code = false,
             provider = "default", -- snacks|default
+          },
+        },
+        ["mcp-prompts"] = {
+          path = "interactions.chat.slash_commands.builtin.mcp_prompts",
+          description = "Insert a prompt from an MCP server",
+          opts = {
+            contains_code = false,
           },
         },
         ["now"] = {
@@ -1262,6 +1272,7 @@ The user is working on a %s machine. Please respond with system specific command
     dirs = {
       "~/.config/codecompanion/skills",
       ".codecompanion/skills",
+      "~/.agents/skills",
       "~/.claude/skills",
       ".claude/skills",
     },

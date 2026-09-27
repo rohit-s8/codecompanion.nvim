@@ -74,6 +74,34 @@ The _file_ slash command allows you to add the contents of a file in the current
 
 The content of a file can be reshaped before the LLM sees it with [context formatters](/configuration/others#context-formatters).
 
+**Searching other directories**
+
+Use `opts.dirs` to give the picker a list of directories to search alongside the current working directory:
+
+```lua
+require("codecompanion").setup({
+  interactions = {
+    chat = {
+      slash_commands = {
+        ["file"] = {
+          opts = {
+            dirs = { "~/notes", "../shared-library" },
+          },
+        },
+      },
+    },
+  },
+})
+```
+
+Paths may be relative or use `~`.
+
+**Images**
+
+Selecting an image sends it to the LLM as an image rather than as file content, in the same way as the [/image](#image) slash command.
+
+**PDFs**
+
 [#3218](https://github.com/olimorris/codecompanion.nvim/pull/3218) added support for PDFs for the following http adapters:
 
 - Anthropic
@@ -128,6 +156,13 @@ The _rules_ slash command allows you to add [rules](/usage/chat-buffer/rules) gr
 ## /mcp
 
 The _mcp_ slash command allows you to start and stop [Model Context Protocol (MCP)](/configuration/mcp) servers manually from within a chat buffer. This is applied at a global level, so starting/stopping servers in one chat buffer will affect all other chat buffers. A _snacks.nvim_ and `vim.ui.select` provider is available for selecting which MCP servers to start/stop.
+
+## /mcp-prompts
+
+The _mcp-prompts_ slash command adds a [prompt](https://modelcontextprotocol.io/specification/2025-11-25/server/prompts) from a running MCP server to the chat buffer, ready for you to edit before sending. After selecting a prompt, you'll be asked for each of its arguments in turn. Optional arguments can be left blank, and cancelling at any point adds nothing.
+
+> [!NOTE]
+> Only the text from a prompt's `user` messages is added. Images, resources and `assistant` messages are skipped
 
 ## /mode
 
