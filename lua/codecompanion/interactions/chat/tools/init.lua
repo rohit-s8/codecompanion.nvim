@@ -125,7 +125,7 @@ function Tools:_resolve_and_prepare_tool(tool)
       if args == "" then
         args = "{}"
       end
-      local ok, decoded = pcall(vim.json.decode, args)
+      local ok, decoded = pcall(vim.json.decode, args, { luanil = { object = true } })
       if not ok then
         log:error("Couldn't decode the tool arguments: %s", args)
         self.chat:add_tool_output(
