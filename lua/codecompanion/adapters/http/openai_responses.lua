@@ -607,10 +607,10 @@ return {
 
           if ok then
             if json.type == "response.completed" and json.response.usage then
-              self.usage.input = self.usage.input + (json.usage.input_tokens or 0)
-              self.usage.output = self.usage.output + (json.usage.output_tokens or 0)
+              self.usage.input = self.usage.input + (json.response.usage.input_tokens or 0)
+              self.usage.output = self.usage.output + (json.response.usage.output_tokens or 0)
 
-              local input_tokens_details = json.usage.input_tokens_details or {}
+              local input_tokens_details = json.response.usage.input_tokens_details or {}
               self.usage.cache_read = self.usage.cache_read + (input_tokens_details.cached_tokens or 0)
               self.usage.cache_write = self.usage.cache_write + (input_tokens_details.cache_write_tokens or 0)
 
